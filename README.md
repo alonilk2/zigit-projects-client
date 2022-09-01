@@ -2,5 +2,5 @@
 
 ### Demo: https://zigit-projects.herokuapp.com/
 
- ### User: Demo
- ### Password: Demo
+### User: demo
+### Password: demo
