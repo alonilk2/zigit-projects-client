@@ -100,10 +100,6 @@ export default function Login(props) {
                   onChange={(e) => setPassword(e.target.value)}
                   error={!password && error}
                 />
-                <FormControlLabel
-                  control={<Checkbox value="remember" color="primary" />}
-                  label="Remember me"
-                />
                 <Button
                   type="submit"
                   fullWidth

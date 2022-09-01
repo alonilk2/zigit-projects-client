@@ -35,7 +35,7 @@ export default function Register(props) {
       })
     );
     if (response.type.endsWith("fulfilled")) {
-      navigate("/auth/login");
+      navigate("/login");
     } else {
       setError(true);
     }
@@ -106,7 +106,7 @@ export default function Register(props) {
                   variant="contained"
                   sx={{ mt: 3, mb: 2 }}
                 >
-                  Sign In
+                  Sign Up
                 </Button>
                 <Grid container>
                   <Grid item xs></Grid>
