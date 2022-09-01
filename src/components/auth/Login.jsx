@@ -1,39 +1,50 @@
-import React, { useEffect, useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
-import "./Login.css";
-import Avatar from "@mui/material/Avatar";
-import Button from "@mui/material/Button";
-import CssBaseline from "@mui/material/CssBaseline";
-import TextField from "@mui/material/TextField";
-import FormControlLabel from "@mui/material/FormControlLabel";
-import Checkbox from "@mui/material/Checkbox";
-import Link from "@mui/material/Link";
-import Grid from "@mui/material/Grid";
-import Box from "@mui/material/Box";
 import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
-import Typography from "@mui/material/Typography";
+import Avatar from "@mui/material/Avatar";
+import Box from "@mui/material/Box";
+import Button from "@mui/material/Button";
+import Checkbox from "@mui/material/Checkbox";
 import Container from "@mui/material/Container";
-import { createTheme, ThemeProvider } from "@mui/material/styles";
+import CssBaseline from "@mui/material/CssBaseline";
+import FormControlLabel from "@mui/material/FormControlLabel";
+import Grid from "@mui/material/Grid";
+import Link from "@mui/material/Link";
+import TextField from "@mui/material/TextField";
+import Typography from "@mui/material/Typography";
+import React, { useState } from "react";
+import { useDispatch } from "react-redux";
+import { ACCESS_TOKEN } from "../../constants";
 import { _login } from "./AuthSlice";
+import "./Login.css";
+import { useNavigate } from "react-router-dom";
+import Alert from "@mui/material/Alert";
+import AlertTitle from "@mui/material/AlertTitle";
 
 export default function Login(props) {
   const [email, setEmail] = useState();
   const [password, setPassword] = useState();
+  const [error, setError] = useState(false);
   const dispatch = useDispatch();
+  const navigate = useNavigate();
 
-  const handleSubmit = (event) => {
-    if (email && password) {
-      dispatch(
-        _login({
-          email: email.toLowerCase(),
-          password: password,
-        })
-      );
+  const handleSubmit = async (event) => {
+    event.preventDefault();
+    if (!email || !password) return setError(true);
+    let response = await dispatch(
+      _login({
+        email: email.toLowerCase(),
+        password: password,
+      })
+    );
+    if (response.type.endsWith("fulfilled")) {
+      localStorage.setItem(ACCESS_TOKEN, response.payload.token);
+      navigate("/projects", { replace: true });
+    } else {
+      setError(true)
     }
   };
 
   return (
-    <div className="container">
+    <div className="main-container">
       <div className="login-container">
         <div className="image-col"></div>
         <div className="form-col">
@@ -47,6 +58,10 @@ export default function Login(props) {
                 alignItems: "center",
               }}
             >
+              {error && <Alert severity="error">
+                <AlertTitle>Error</AlertTitle>
+                Please ensure the details entered are correct
+              </Alert>}
               <Avatar sx={{ m: 1, bgcolor: "secondary.main" }}>
                 <LockOutlinedIcon />
               </Avatar>
@@ -68,6 +83,9 @@ export default function Login(props) {
                   name="email"
                   autoComplete="email"
                   autoFocus
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  error={!email && error}
                 />
                 <TextField
                   margin="normal"
@@ -77,7 +95,10 @@ export default function Login(props) {
                   label="Password"
                   type="password"
                   id="password"
+                  value={password}
                   autoComplete="current-password"
+                  onChange={(e) => setPassword(e.target.value)}
+                  error={!password && error}
                 />
                 <FormControlLabel
                   control={<Checkbox value="remember" color="primary" />}
@@ -92,13 +113,9 @@ export default function Login(props) {
                   Sign In
                 </Button>
                 <Grid container>
-                  <Grid item xs>
-                    <Link href="#" variant="body2">
-                      Forgot password?
-                    </Link>
-                  </Grid>
+                  <Grid item xs></Grid>
                   <Grid item>
-                    <Link href="#" variant="body2">
+                    <Link href="/register" variant="body2">
                       {"Don't have an account? Sign Up"}
                     </Link>
                   </Grid>
